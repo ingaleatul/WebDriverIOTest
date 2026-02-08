@@ -3,7 +3,7 @@
 
 class BasicAuthPage {
   get message() {
-    return $(".example > p");
+    return $("div#content p");
   }
   async login(username, password) {
     await this.open(username, password);

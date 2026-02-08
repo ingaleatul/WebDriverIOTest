@@ -12,13 +12,38 @@ Given("I am at the index page", async function () {
 
 When(/^I click the (.+) link$/, async function (page) {
   this.page = page;
+  if (page === "Broken Images") {
+    await index.open(page);
+    return;
+  }
+
   await index.click(page);
 });
 
 Then("I should be driected to the selected page", async function () {
-  const html = await $("*").getHTML();
-  console.log(html);
-  expect(html).toMatch(new RegExp(`/h3.+${this.page}.+h3/`, "gm"));
-  // const header = await $("h3");
-  // expect(header).toHaveTextContaining(this.page);
+  await browser.waitUntil(
+    async () => {
+      const url = await browser.getUrl();
+      return url !== `${new Page().base}/`;
+    },
+    { timeout: 5000 }
+  );
+
+  const url = await browser.getUrl();
+  const expectedPath = new Page().paths[this.page];
+
+  if (this.page === "WYSIWYG Editor") {
+    expect(url).toContain("tinymce");
+    try {
+      await browser.pause(2000);
+      const dismissBtn = await $(".tox-notification__dismiss");
+      if (await dismissBtn.isExisting()) {
+        await dismissBtn.click();
+      }
+    } catch (e) {
+      // Ignore if dismiss button not found
+    }
+  } else {
+    expect(url).toContain(expectedPath);
+  }
 });

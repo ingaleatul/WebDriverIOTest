@@ -1,3 +1,5 @@
+import { browser } from "@wdio/globals";
+
 class DropdownPage {
   get elements() {
     return {
@@ -7,7 +9,15 @@ class DropdownPage {
   }
 
   async set(value) {
-    await (await this.elements.input()).setValue(value);
+    const input = await this.elements.input();
+    await input.waitForExist({ timeout: 5000 });
+    await input.waitForDisplayed({ timeout: 5000 });
+    await input.scrollIntoView();
+    await input.clearValue();
+    await input.setValue(value);
+    await browser.waitUntil(async () => (await input.getValue()) === String(value), {
+      timeout: 5000,
+    });
   }
 }
 

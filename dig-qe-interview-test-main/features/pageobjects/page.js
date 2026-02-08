@@ -10,7 +10,7 @@ export default class Page {
       "Basic Auth": "basic_auth",
       Checkboxes: "checkboxes",
       Dropdown: "dropdown",
-      inputs: "inputs",
+      Inputs: "inputs",
 
       "A/B Testing": "abtest",
       "Add/Remove Elements": "add_remove_elements/",
@@ -61,6 +61,7 @@ export default class Page {
 
   async click(name) {
     const anchor = await $(`a[href="/${this.paths[name]}"]`);
+    await anchor.waitForClickable({ timeout: 5000 });
     await anchor.click();
   }
 
